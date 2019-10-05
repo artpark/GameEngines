@@ -1,4 +1,6 @@
 # Game Engines - Homework 2
+Thanut (Art) Parkeenvincha  
+CMPM 164 - Game Engines  
 
 ### Part A
 Tasked with creating an animated 3D scene of your choice using the Unreal Engine
