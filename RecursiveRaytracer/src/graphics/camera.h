@@ -1,8 +1,6 @@
 #ifndef Camera_h
 #define Camera_h
 
-#include <list>
-
 class Camera {
     public:
         Vec3 eye;

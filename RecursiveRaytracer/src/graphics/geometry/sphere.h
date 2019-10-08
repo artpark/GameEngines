@@ -1,8 +1,6 @@
 #ifndef Sphere_h
 #define Sphere_h
 
-#include "../../vect.h"
-
 class Sphere {
     public:
         Vec3 center;

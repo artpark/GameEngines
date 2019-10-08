@@ -1,9 +1,9 @@
 #ifndef Scene_h
 #define Scene_h
 
-#include "./geometry/sphere.h"
-#include "./lightSource.h"
-#include "./camera.h"
+#include "geometry/sphere.h"
+#include "lightSource.h"
+#include "camera.h"
 
 #include <list>
 
