@@ -2,9 +2,11 @@
  *  Name: Thanut (Art) Parkeenvincha
  *  Class: CMPM 164 - Game Engines
  *  Date: 10/07/2019
- *  Homework #2: Recursive Raytracing
+ *  Homework #2: Recursive Ray-Tracing
  */
  
+ #include "./graphics/scene.h"
+
 #include <iostream>
 #include <fstream>
 #include <cstdint>

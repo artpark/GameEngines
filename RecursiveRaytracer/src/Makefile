@@ -1,14 +1,14 @@
-all : rraytracer
+all : main
 	
 
-rraytracer : rraytracer.o
-	g++ -Wall -Wextra -Wpedantic -Wshadow -o rraytracer rraytracer.o
+main : main.o
+	g++ -Wall -Wextra -Wpedantic -Wshadow -o main main.o
 
-rraytracer.o : rraytracer.cpp
-	g++ -Wall -Wextra -Wpedantic -Wshadow -c rraytracer.cpp
+main.o : main.cpp
+	g++ -Wall -Wextra -Wpedantic -Wshadow -c main.cpp
 
 clean : 
-	rm -f rraytracer.o
+	rm -f main.o
 
 spotless : clean
-	rm -f rraytracer output.ppm
+	rm -f main output.ppm
