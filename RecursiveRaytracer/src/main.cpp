@@ -4,10 +4,7 @@
  *  Date: 10/07/2019
  *  Homework #2: Recursive Raytracing
  */
-#include "vect.h"
-#include "ray.h"
-#include "scene.h"
-
+ 
 #include <iostream>
 #include <fstream>
 #include <cstdint>
