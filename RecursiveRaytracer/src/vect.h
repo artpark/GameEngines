@@ -1,3 +1,6 @@
+/*
+ *  Citation: https://github.com/ChinksofLight/Ray-tracer/blob/master/vect.h
+ */
 #ifndef Vect_h
 #define Vect_h
 
@@ -10,7 +13,40 @@ class Vec3 {
         float X;
         float Y;
         float Z;
+        
         Vec3(float x, float y, float z) : X(x), Y(y), Z(z) {}
+
+        Vec3 operator +(const Vec3& vec) const {
+            return Vec3(X + vec.X, Y + vec.Y, Z + vec.Z);
+        }
+
+        Vec3 operator -(const Vec3& vec) const {
+            return Vec3(X - vec.X, Y - vec.Y, Z - vec.Z);
+        }
+
+        Vec3 operator *(double scalar) const {
+            return Vec3(scalar * X, scalar * Y, scalar * Z);
+        }
+
+        Vec3 crossProduct(const Vec3& vec) const {
+            return Vec3(vec.Y * Z - vec.Z * Y, vec.Z * X - vec.X * Z, vec.X * Z - vec.Y * X);
+        }
+
+        double dot(const Vec3& vec) const {
+            return X * vec.X + Y * vec.Y + Z * vec.Z;
+        }
+
+        double norm() const {
+            return sqrt(dot(*this));
+        }
+
+        double  norm2() const {
+            return dot(*this);
+        }
+
+        Vec3 normalize() {
+            return (*this)*(1/norm());
+        }
 };
 
 #endif

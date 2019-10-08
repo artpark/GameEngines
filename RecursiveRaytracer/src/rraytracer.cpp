@@ -5,6 +5,8 @@
  *  Homework #2: Recursive Raytracing
  */
 #include "vect.h"
+#include "ray.h"
+#include "scene.h"
 
 #include <iostream>
 #include <fstream>
@@ -33,7 +35,7 @@ int main()
         {
             for(size_t w = 0; w < WIDTH; w++)
             {
-                outputImage << (int)255 << ' ' << (int)0 << ' ' << (int)0 << "\n";
+                outputImage << (int)255 << ' ' << (int)255 << ' ' << (int)0 << "\n";
             }
         }
         outputImage.close();
