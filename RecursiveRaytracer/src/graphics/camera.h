@@ -1,6 +1,8 @@
 #ifndef Camera_h
 #define Camera_h
 
+#include "../vect.h"
+
 class Camera {
     public:
         Vec3 eye;

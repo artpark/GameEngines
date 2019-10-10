@@ -5,7 +5,8 @@
  *  Homework #2: Recursive Ray-Tracing
  */
  
- #include "./graphics/scene.h"
+#include "./graphics/scene.h"
+#include "vect.h"
 
 #include <iostream>
 #include <fstream>
@@ -19,6 +20,19 @@ int main()
     const uint32_t HEIGHT = 500;
     const uint32_t WIDTH = 500;
     const uint32_t RGB_MAX = 255;
+
+    Scene scene = Scene();
+    
+    // Spheres
+    Sphere sphere1 = Sphere(0, 0, 0, 1, Color_t(255,0,0));
+    Sphere sphere2 = Sphere(0, 1, 1, 2, Color_t(255,0,0));
+
+    // Light source
+    LightSource lightSource = LightSource(0, 5, 0);
+
+    scene.add(&sphere1);
+    scene.add(&sphere2);
+    scene.add(&lightSource);
 
     ofstream outputImage ("output.ppm");
     if (outputImage.is_open())
