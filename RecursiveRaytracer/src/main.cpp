@@ -7,6 +7,7 @@
  
 #include "./graphics/scene.h"
 #include "vect.h"
+#include "ray.h"
 
 #include <iostream>
 #include <fstream>
@@ -44,10 +45,17 @@ int main()
          */
         outputImage << "P3\n" << WIDTH << " " << HEIGHT << "\n" << RGB_MAX << "\n";
         // For each pixel, calculate the color using the raytracer
-        for(size_t h = 0; h < HEIGHT; h++)
+        for(uint32_t h = 0; h < HEIGHT; h++)
         {
-            for(size_t w = 0; w < WIDTH; w++)
+            for(uint32_t w = 0; w < WIDTH; w++)
             {
+                // Generating ray per pixel
+                float rayX = (2 * (w + 0.5) / (float)WIDTH - 1);
+                float rayY = (1 - 2 * (h + 0.5) / (float)HEIGHT);
+                Vec3 origin = Vec3(0, 0, -1);
+                Vec3 direction = Vec3(rayX, rayY, -1).normalize();
+                Ray ray = Ray(origin, direction);
+
                 outputImage << (int)255 << ' ' << (int)255 << ' ' << (int)0 << "\n";
             }
         }
