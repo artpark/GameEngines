@@ -25,15 +25,13 @@ int main()
     Scene scene = Scene();
     
     // Spheres
-    Sphere sphere1 = Sphere(0, 0, 0, 1, Color_t(255,0,0));
-    Sphere sphere2 = Sphere(0, 1, 1, 2, Color_t(255,0,0));
+    Sphere sphere1 = Sphere(100, 100, 5, 100, Color_t(255,0,0));
 
     // Light source
     LightSource lightSource = LightSource(0, 5, 0);
 
     scene.add(&sphere1);
-    scene.add(&sphere2);
-    scene.add(&lightSource);
+    scene.add(lightSource);
 
     ofstream outputImage ("output.ppm");
     if (outputImage.is_open())
@@ -50,13 +48,14 @@ int main()
             for(uint32_t w = 0; w < WIDTH; w++)
             {
                 // Generating ray per pixel
-                float rayX = (2 * (w + 0.5) / (float)WIDTH - 1);
-                float rayY = (1 - 2 * (h + 0.5) / (float)HEIGHT);
-                Vec3 origin = Vec3(0, 0, -1);
-                Vec3 direction = Vec3(rayX, rayY, -1).normalize();
-                Ray ray = Ray(origin, direction);
+                // float rayX = (2 * (w + 0.5) / (float)WIDTH - 1);
+                // float rayY = (1 - 2 * (h + 0.5) / (float)HEIGHT);
+                // Vec3 origin = Vec3(0, 0, -1);
+                // Vec3 direction = Vec3(rayX, rayY, -1).normalize();
+                // Ray ray = Ray(origin, direction);
 
-                outputImage << (int)255 << ' ' << (int)255 << ' ' << (int)0 << "\n";
+                Color_t pix_col = scene.trace(w, h);                
+                outputImage << (int)pix_col.r << ' ' << (int)pix_col.g << ' ' << (int)pix_col.b << "\n";
             }
         }
         outputImage.close();
