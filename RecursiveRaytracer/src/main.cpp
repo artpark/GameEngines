@@ -21,17 +21,22 @@ int main()
     const uint32_t HEIGHT = 500;
     const uint32_t WIDTH = 500;
     const uint32_t RGB_MAX = 255;
+    const uint32_t FOV = 90;
+    const float SCALE = tan((FOV * 0.5) * M_PI / 180);
+    const float ASPECT_RATIO = WIDTH / (float)HEIGHT;
 
     Scene scene = Scene();
     
     // Spheres
-    Sphere sphere1 = Sphere(100, 100, 5, 100, Color_t(255,0,0));
+    Sphere sphere1 = Sphere(-5, 0, -12, 5, Color_t(255,0,0), REFLECTIVE);
+    Sphere sphere2 = Sphere(5, 0, -12, 5, Color_t(0,255,0), MAT);
 
     // Light source
-    LightSource lightSource = LightSource(0, 5, 0);
+    LightSource lightSource1 = LightSource(-10, 10, -12);
 
     scene.add(&sphere1);
-    scene.add(lightSource);
+    scene.add(&sphere2);
+    scene.add(lightSource1);
 
     ofstream outputImage ("output.ppm");
     if (outputImage.is_open())
@@ -48,13 +53,10 @@ int main()
             for(uint32_t w = 0; w < WIDTH; w++)
             {
                 // Generating ray per pixel
-                // float rayX = (2 * (w + 0.5) / (float)WIDTH - 1);
-                // float rayY = (1 - 2 * (h + 0.5) / (float)HEIGHT);
-                // Vec3 origin = Vec3(0, 0, -1);
-                // Vec3 direction = Vec3(rayX, rayY, -1).normalize();
-                // Ray ray = Ray(origin, direction);
+                float rayX = (2 * (w + 0.5) / (float)WIDTH - 1) * ASPECT_RATIO * SCALE;
+                float rayY = (1 - 2 * (h + 0.5) / (float)HEIGHT) * SCALE;
 
-                Color_t pix_col = scene.trace(w, h);                
+                Color_t pix_col = scene.trace(rayX, rayY);                
                 outputImage << (int)pix_col.r << ' ' << (int)pix_col.g << ' ' << (int)pix_col.b << "\n";
             }
         }

@@ -2,6 +2,7 @@
 #define Sphere_h
 
 #include "geometry.h"
+#include <iostream>
 
 class Sphere : public Geometry {
     public:
@@ -16,10 +17,9 @@ class Sphere : public Geometry {
         }
 
         bool intersect(const Ray& ray, double &t) const {
-            Vec3 v = ray.origin - center;
-            
-            const double b = 2 * v.dot(ray.direction);
-            const double c = v.dot(v) - radius * radius;
+            Vec3 L = ray.origin - center;
+            const double b = 2 * ray.direction.dot(L);
+            const double c = L.dot(L) - radius * radius;
             double delta = b*b - 4 * c;
             if(delta < 0)
             {

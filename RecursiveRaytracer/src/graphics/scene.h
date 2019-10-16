@@ -30,49 +30,53 @@ class Scene {
 
         Color_t Shading(const Ray& ray, const Geometry& geometry, double t, int depth)
         {          
-            Vec3 intersect_point = ray.origin + ray.direction * t;
+            Vec3 rayOrig = ray.origin;
+            Vec3 rayDir = ray.direction;
+            Vec3 intersect_point = ray.origin + rayDir * t;
             Vec3 normal = geometry.get_normal(intersect_point);
-    
+
             switch (geometry.texture){ 
             case MAT:
                 //This was chinkOfLight's formula
-                return (geometry.color).scale_by(normal.dot(ray.direction) * 0.5);
+                return (geometry.color).scale_by(normal.dot(rayDir) * 0.5);
             case REFLECTIVE:
             {
-                Color_t c = (geometry.color).scale_by(normal.dot(ray.direction) * 0.5); 
+                Vec3 reflectDir = ray.reflect_by(normal);
+                Vec3 reflectRayOrig = (reflectDir.dot(normal) < 0) ? intersect_point + normal : intersect_point - normal;
+                Color_t c = (geometry.color).scale_by(normal.dot(rayDir) * 0.5); 
                 if (depth > 0)
-                    c = c+ trace_ray(Ray(intersect_point, (ray.direction - normal * ray.direction.dot(normal) * 2).normalize()), &geometry, depth -1);
+                    c = c + trace_ray(Ray(reflectRayOrig, reflectDir), &geometry, depth -1) * 0.00001;
                 return c;
             }
-            // case SPECULAR:
-            // {
-            //     Color_t c = Color_t(0, 0, 0);
-            //     for (const LightSource& light: lightSources){
-            //         Vec3 light2pos = light.position - intersect_point;
-            //         //specular:
-            //         if (check_occlusion(intersect_point, light.position)) {
-            //             c = c + light.color.scale_by2(ray.reflect_by(normal).dot(light2pos.normalize())); // add check for occlusion
-            //             //mat:
-            //             c = c + (geometry.color).mix_with(light.color).scale_by(light.intensity / (light.position - intersect_point).norm2());
-            //         }
-            //     }
-            //     //reflections:
-            //     if (depth > 0)
-            //         c = c + trace_ray(Ray(intersect_point, (ray.direction - normal * ray.direction.dot(normal) * 2).normalize()), &geometry, depth - 1);
-            //     return c;
+            case SPECULAR:
+            {
+                Color_t c = Color_t(0, 0, 0);
+                for (const LightSource& light: lightSources){
+                    Vec3 light2pos = light.position - intersect_point;
+                    //specular:
+                    if (check_occlusion(intersect_point, light.position)) {
+                        c = c + light.color.scale_by2(ray.reflect_by(normal).dot(light2pos.normalize())); // add check for occlusion
+                        //mat:
+                        c = c + (geometry.color).mix_with(light.color).scale_by(light.intensity / (light.position - intersect_point).norm2());
+                    }
+                }
+                //reflections:
+                if (depth > 0)
+                    c = c + trace_ray(Ray(intersect_point, (rayDir - normal * rayDir.dot(normal) * 2).normalize()), &geometry, depth - 1);
+                return c;
                 
-            // }
+            }
             default:
                 //throw exception("unrecognized texture");// UNRECOGNIZED_TEXTURE
                 exit(1);
             }
         }
 
-        Color_t trace(int x, int y) 
+        Color_t trace(float x, float y) 
         {
             // This function works as the camera, translating pixels to rays
-            Vec3 ray_origin = Vec3(0, 0, -1000);
-            Vec3 ray_direction = Vec3(x, y, 1250).normalize();
+            Vec3 ray_origin = Vec3(0, 0, 0);
+            Vec3 ray_direction = Vec3(x, y, -1).normalize();
 
             return trace_ray(Ray(ray_origin, ray_direction), 0, 50);
 	    }
@@ -80,10 +84,9 @@ class Scene {
 	    Color_t trace_ray(const Ray& ray, const Geometry* exclude_obj, int depth)
         {
             double min_t = __FLT_MAX__;
-            // int min_i = -1;
             const Geometry* nearest_obj = nullptr;
-
             double t = __FLT_MAX__;
+            
             for (const Geometry* geometry : geometries) {
                     if ((*geometry).intersect(ray, t)) {
                         if (min_t > t) {
@@ -98,6 +101,24 @@ class Scene {
                 return Shading(ray, *nearest_obj, min_t, depth);
             }
             return Color_t(0, 0, 0);
+	    }
+
+        bool check_occlusion(Vec3 target, Vec3 source) {
+            Vec3 toSource = source - target;
+            double t_light = toSource.norm();
+            Ray ray = Ray(target, toSource * (1.0 / t_light));
+            double min_t = t_light;
+            const Geometry* nearest_obj = nullptr;
+            double t = __FLT_MAX__;
+            for (const Geometry* geometry : geometries) {		
+                if ((*geometry).intersect(ray, t)) {
+                    if (min_t > t) {
+                        nearest_obj = geometry;
+                        min_t = t;
+                    }
+                }
+            }
+            return nearest_obj == nullptr; // false if lightsource is occluded
 	    }
 };
 

@@ -24,12 +24,16 @@ class Vec3 {
             return Vec3(X - vec.X, Y - vec.Y, Z - vec.Z);
         }
 
-        Vec3 operator *(double scalar) const {
+        Vec3 operator *(const double &scalar) const {
             return Vec3(scalar * X, scalar * Y, scalar * Z);
         }
 
         Vec3 crossProduct(const Vec3& vec) const {
             return Vec3(vec.Y * Z - vec.Z * Y, vec.Z * X - vec.X * Z, vec.X * Z - vec.Y * X);
+        }
+
+        Vec3 normalize() {
+            return (*this)*(1/norm());
         }
 
         double dot(const Vec3& vec) const {
@@ -40,13 +44,9 @@ class Vec3 {
             return sqrt(dot(*this));
         }
 
-        double  norm2() const {
+        double norm2() const {
             return dot(*this);
-        }
-
-        Vec3 normalize() {
-            return (*this)*(1/norm());
-        }
+        }   
 };
 
 #endif
