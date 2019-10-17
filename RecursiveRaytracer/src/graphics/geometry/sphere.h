@@ -5,38 +5,36 @@
 #include <iostream>
 
 class Sphere : public Geometry {
-    public:
-        Vec3 center;
-        float radius;
+public:
+  Vec3 center;
+  float radius, radius2;
 
-        Sphere(float x, float y, float z, float r, Color_t color_, Texture_t texture_=MAT) : Geometry(color_, texture_), center(Vec3(x, y, z)), radius(r) {}
-        Sphere(Vec3 c, float r, Color_t color_, Texture_t texture_=MAT) : Geometry(color_, texture_), center(c), radius(r) {}
+  Sphere(float x, float y, float z, float r)
+      : center(Vec3(x, y, z)), radius(r), radius2(r * r) {}
+  Sphere(Vec3 c, float r) : center(c), radius(r), radius2(r * r) {}
 
-        Vec3 get_normal(const Vec3& p) const {
-            return ((p - center) * (-1/radius)).normalize();
-        }
+  bool intersect(const Vec3 &orig, const Vec3 &dir, float &tnear,
+                 uint32_t &index, Vec2 &uv) const {
+    // analytic solution
+    Vec3 L = orig - center;
+    float a = dir.dot(dir);
+    float b = 2 * dir.dot(L);
+    float c = L.dot(L) - radius2;
+    float t0, t1;
+    if (!solveQuadratic(a, b, c, t0, t1))
+      return false;
+    if (t0 < 0)
+      t0 = t1;
+    if (t0 < 0)
+      return false;
+    tnear = t0;
+    return true;
+  }
 
-        bool intersect(const Ray& ray, double &t) const {
-            Vec3 L = ray.origin - center;
-            const double b = 2 * ray.direction.dot(L);
-            const double c = L.dot(L) - radius * radius;
-            double delta = b*b - 4 * c;
-            if(delta < 0)
-            {
-                t = __FLT_MAX__;
-                return false;
-            }
-            const double t1 = (-b - sqrt(delta)) / 2;
-            const double t2 = (-b + sqrt(delta)) / 2;
-            if(t2 < SELF_AVOID_T)
-            {
-                t = __FLT_MAX__;
-                return false;
-            }
-            
-            t = (t1 >= SELF_AVOID_T) ? t1 : t2;
-            return true;
-        }
+  void getSurfaceProperties(const Vec3 &P, const Vec3 &I, const uint32_t &index,
+                            const Vec2 &uv, Vec3 &N, Vec2 &st) const {
+    N = (P - center).normalize();
+  }
 };
 
 #endif
