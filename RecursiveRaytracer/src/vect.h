@@ -5,6 +5,7 @@
 #define Vect_h
 
 #include <cmath>
+#include <ostream>
 
 using namespace std;
 
@@ -30,12 +31,18 @@ public:
     return Vec3(scalar * X, scalar * Y, scalar * Z);
   }
 
+  Vec3 operator*(const Vec3 &vec) const {
+    return Vec3(X * vec.X, Y * vec.Y, Z * vec.Z);
+  }
+
   Vec3 crossProduct(const Vec3 &vec) const {
     return Vec3(Y * vec.Z - Z * vec.Y, Z * vec.X - X * vec.Z,
                 X * vec.Y - Y * vec.X);
   }
 
   Vec3 normalize() { return (*this) * (1 / norm()); }
+
+  Vec3 reflect(const Vec3 &N) { return (*this) - N - 2 * (*this).dot(N); }
 
   double dot(const Vec3 &vec) const {
     return X * vec.X + Y * vec.Y + Z * vec.Z;
@@ -44,6 +51,10 @@ public:
   double norm() const { return sqrt(dot(*this)); }
 
   double norm2() const { return dot(*this); }
+
+  friend ostream &operator<<(ostream &os, const Vec3 &v) {
+    return os << v.X << ", " << v.Y << ", " << v.Z;
+  }
 };
 
 class Vec2 {

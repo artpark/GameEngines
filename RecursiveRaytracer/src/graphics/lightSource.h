@@ -4,13 +4,13 @@
 #include "../vect.h"
 
 class LightSource {
-    public:
-        Vec3 position;
-        Color_t color;
-        double intensity = 100;
+public:
+  Vec3 position;
+  Vec3 intensity;
 
-        LightSource(float x, float y, float z, Color_t color_ = Color_t(255,255,255), double intensity_ = 100.0) : position(Vec3(x, y, z)), color(color_), intensity(intensity_) {}
-        LightSource(Vec3 p, Color_t color_ = Color_t(255,255,255), double intensity_ = 100.0) : position(p), color(color_), intensity(intensity_) {}
+  LightSource(float x, float y, float z, Vec3 intensity_)
+      : position(Vec3(x, y, z)), intensity(intensity_) {}
+  LightSource(Vec3 p, Vec3 intensity_) : position(p), intensity(intensity_) {}
 };
 
 #endif

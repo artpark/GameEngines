@@ -15,6 +15,10 @@
 
 using namespace std;
 
+inline float clamp(const float &lo, const float &hi, const float &v) {
+  return max(lo, min(hi, v));
+}
+
 int main() {
   // Constants
   const uint32_t HEIGHT = 500;
@@ -28,7 +32,9 @@ int main() {
 
   // Spheres
   Sphere sphere1 = Sphere(-1, 0, -12, 2);
+  sphere1.diffuseColor = Vec3(1.0, 0.0, 0.0);
   Sphere sphere2 = Sphere(0.5, -0.5, -8, 1.5);
+  sphere2.diffuseColor = Vec3(0.0, 1.0, 0.0);
 
   // Mesh Triangles
   Vec3 verts[4] = {{-5, -3, -6}, {5, -3, -6}, {5, -3, -16}, {-5, -3, -16}};
@@ -37,8 +43,8 @@ int main() {
   MeshTriangle mesh = MeshTriangle(verts, vertIndex, 2, st);
 
   // Light source
-  LightSource lightSource1 = LightSource(-20, 70, -20);
-  LightSource lightSource2 = LightSource(30, 50, -12);
+  LightSource lightSource1 = LightSource(-20, 70, -20, 0.5);
+  LightSource lightSource2 = LightSource(30, 50, -12, 1);
 
   scene.add(&sphere1);
   scene.add(&sphere2);
@@ -61,9 +67,11 @@ int main() {
         float rayX = (2 * (w + 0.5) / (float)WIDTH - 1) * ASPECT_RATIO * SCALE;
         float rayY = (1 - 2 * (h + 0.5) / (float)HEIGHT) * SCALE;
 
-        Color_t pix_col = scene.trace(rayX, rayY);
-        outputImage << (int)pix_col.r << ' ' << (int)pix_col.g << ' '
-                    << (int)pix_col.b << "\n";
+        Vec3 pixCol = scene.trace(rayX, rayY);
+        int r = (int)(255 * clamp(0, 1, pixCol.X));
+        int g = (int)(255 * clamp(0, 1, pixCol.Y));
+        int b = (int)(255 * clamp(0, 1, pixCol.Z));
+        outputImage << r << ' ' << g << ' ' << b << "\n";
       }
     }
     outputImage.close();
