@@ -70,6 +70,30 @@ public:
   }
 };
 
+inline float clamp(const float &lo, const float &hi, const float &v)
+{
+  return max(lo, min(hi, v));
+}
+
+Vec3 refract(const Vec3 &I, const Vec3 &N, const float &ior)
+{
+  float cosi = clamp(-1, 1, I.dot(N));
+  float etai = 1, etat = ior;
+  Vec3 n = N;
+  if (cosi < 0)
+  {
+    cosi = -cosi;
+  }
+  else
+  {
+    swap(etai, etat);
+    n = -N;
+  }
+  float eta = etai / etat;
+  float k = 1 - eta * eta * (1 - cosi * cosi);
+  return k < 0 ? 0 : I * eta + n * (eta * cosi - sqrtf(k));
+}
+
 class Vec2
 {
 public:

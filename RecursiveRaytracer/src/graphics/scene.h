@@ -12,6 +12,35 @@
 
 using namespace std;
 
+void fresnel(const Vec3 &I, const Vec3 &N, const float &ior, float &kr)
+{
+  float cosi = clamp(-1, 1, I.dot(N));
+  float etai = 1, etat = ior;
+  if (cosi > 0)
+  {
+    swap(etai, etat);
+  }
+  // Compute sini using Snell's law
+  float sint = etai / etat * sqrtf(max(0.f, 1 - cosi * cosi));
+  // Total internal reflection
+  if (sint >= 1)
+  {
+    kr = 1;
+  }
+  else
+  {
+    float cost = sqrtf(max(0.f, 1 - sint * sint));
+    cosi = fabsf(cosi);
+    float Rs =
+        ((etat * cosi) - (etai * cost)) / ((etat * cosi) + (etai * cost));
+    float Rp =
+        ((etai * cosi) - (etat * cost)) / ((etai * cosi) + (etat * cost));
+    kr = (Rs * Rs + Rp * Rp) / 2;
+  }
+  // As a consequence of the conservation of energy, transmittance is given by:
+  // kt = 1 - kr;
+}
+
 class Scene
 {
 public:
@@ -27,7 +56,7 @@ public:
   Vec3 Shading(const Ray &ray, const Geometry &hitGeometry, double t,
                int depth)
   {
-    Vec3 hitColor = Vec3(255, 255, 255);
+    Vec3 hitColor = Vec3(1, 1, 1);
     if (depth < 0)
     {
       return hitColor;
@@ -48,12 +77,24 @@ public:
     case (REFLECTION):
     {
       Vec3 reflectionDir = rayDir.reflect(normal).normalize();
-      Vec3 reflectionRayOrig = (reflectionDir.dot(normal) < 0) ? hitPoint + normal * 0.00001 : hitPoint - normal * 0.00001;
+      Vec3 reflectionRayOrig = (reflectionDir.dot(normal) < 0) ? hitPoint - normal * 0.00001 : hitPoint + normal * 0.00001;
       hitColor = trace_ray(Ray(reflectionRayOrig, reflectionDir), depth - 1);
       break;
     }
     case (REFLECTION_AND_REFRACTION):
     {
+      Vec3 reflectionDir = rayDir.reflect(normal).normalize();
+      Vec3 reflectionRayOrig = (reflectionDir.dot(normal) < 0) ? hitPoint - normal * 0.00001 : hitPoint + normal * 0.00001;
+      Vec3 reflectionColor = trace_ray(Ray(reflectionRayOrig, reflectionDir), depth - 1);
+
+      Vec3 refractionDir = refract(rayDir, normal, hitGeometry.ior).normalize();
+      Vec3 refractionRayOrig = (refractionDir.dot(normal) < 0) ? hitPoint - normal * 0.00001 : hitPoint + normal * 0.00001;
+      Vec3 refractionColor = trace_ray(Ray(refractionRayOrig, refractionDir), depth - 1);
+
+      float kr;
+      fresnel(rayDir, normal, hitGeometry.ior, kr);
+      cout << refractionColor << "\trefraction\n";
+      hitColor = reflectionColor * kr + refractionColor * (1 - kr);
       break;
     }
     default: //DIFFUSE_AND_GLOSSY
@@ -118,7 +159,7 @@ public:
     {
       return Shading(ray, *nearest_obj, tNearK, depth);
     }
-    return Vec3(255, 255, 255);
+    return Vec3(1, 1, 1);
   }
 
   bool check_occlusion(Vec3 source, Vec3 target, const Geometry &self)

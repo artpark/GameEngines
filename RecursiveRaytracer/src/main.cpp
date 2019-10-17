@@ -15,11 +15,6 @@
 
 using namespace std;
 
-inline float clamp(const float &lo, const float &hi, const float &v)
-{
-  return max(lo, min(hi, v));
-}
-
 int main()
 {
   // Constants
@@ -41,7 +36,7 @@ int main()
   sphere2.ambientColor = Vec3(0.0, 1.0, 0.0);
   sphere2.diffuseColor = Vec3(1.0, 1.0, 0.0);
   sphere2.Ks = 1;
-  sphere2.materialType = REFLECTION;
+  sphere2.materialType = REFLECTION_AND_REFRACTION;
 
   Sphere sphere3 = Sphere(-1.5, -0.5, -6, 0.5);
   sphere3.ambientColor = Vec3(0.0, 0.0, 1.0);
