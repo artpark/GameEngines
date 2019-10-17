@@ -78,6 +78,7 @@ public:
     {
       Vec3 reflectionDir = rayDir.reflect(normal).normalize();
       Vec3 reflectionRayOrig = (reflectionDir.dot(normal) < 0) ? hitPoint - normal * 0.00001 : hitPoint + normal * 0.00001;
+
       hitColor = trace_ray(Ray(reflectionRayOrig, reflectionDir), depth - 1);
       break;
     }
@@ -93,7 +94,6 @@ public:
 
       float kr;
       fresnel(rayDir, normal, hitGeometry.ior, kr);
-      cout << refractionColor << "\trefraction\n";
       hitColor = reflectionColor * kr + refractionColor * (1 - kr);
       break;
     }

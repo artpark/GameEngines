@@ -28,27 +28,27 @@ int main()
   Scene scene = Scene();
 
   // Spheres
-  Sphere sphere1 = Sphere(-1, 0, -12, 2);
+  Sphere sphere1 = Sphere(-1.5, -1, -12, 2);
   sphere1.ambientColor = Vec3(1.0, 1.0, 0.0);
   sphere1.diffuseColor = Vec3(1.0, 0.0, 0.0);
 
-  Sphere sphere2 = Sphere(0.5, -0.5, -8, 1.5);
+  Sphere sphere2 = Sphere(1.5, -0.5, -8, 3);
   sphere2.ambientColor = Vec3(0.0, 1.0, 0.0);
   sphere2.diffuseColor = Vec3(1.0, 1.0, 0.0);
   sphere2.Ks = 1;
   sphere2.materialType = REFLECTION_AND_REFRACTION;
 
-  Sphere sphere3 = Sphere(-1.5, -0.5, -6, 0.5);
+  Sphere sphere3 = Sphere(-2, -2.5, -6, 0.5);
   sphere3.ambientColor = Vec3(0.0, 0.0, 1.0);
   sphere3.diffuseColor = Vec3(0.0, 1.0, 0.0);
   sphere3.Ks = 1;
 
   // Mesh Triangles
-  Vec3 verts[4] = {{-5, -3, -6}, {5, -3, -6}, {5, -3, -16}, {-5, -3, -16}};
-  uint32_t vertIndex[6] = {0, 1, 3, 1, 2, 3};
-  Vec2 st[4] = {{0, 0}, {1, 0}, {1, 1}, {0, 1}};
-  MeshTriangle mesh = MeshTriangle(verts, vertIndex, 2, st);
-  mesh.Ka = 0;
+  Vec3 floorVerts[4] = {{-8, -3, -2}, {8, -3, -2}, {8, -3, -20}, {-8, -3, -20}};
+  uint32_t floorVertIndex[6] = {0, 1, 3, 1, 2, 3};
+  Vec2 floorSt[4] = {{0, 0}, {1, 0}, {1, 1}, {0, 1}};
+  MeshTriangle floor = MeshTriangle(floorVerts, floorVertIndex, 2, floorSt);
+  floor.Ka = 0;
 
   // Light source
   LightSource lightSource1 = LightSource(-20, 70, -20, 0.5);
@@ -57,7 +57,7 @@ int main()
   scene.add(&sphere1);
   scene.add(&sphere2);
   scene.add(&sphere3);
-  scene.add(&mesh);
+  scene.add(&floor);
   scene.add(lightSource1);
   scene.add(lightSource2);
 
