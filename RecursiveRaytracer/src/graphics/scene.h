@@ -2,7 +2,6 @@
 #define Scene_h
 
 #include "../vect.h"
-#include "camera.h"
 #include "geometry/meshTriangle.h"
 #include "geometry/sphere.h"
 #include "lightSource.h"
