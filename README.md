@@ -10,7 +10,7 @@ Tasked with creating an animated 3D scene of your choice using the Unreal Engine
 ![alt text](https://github.com/artpark/GameEngines-Homework2/blob/master/UE4%20Scene/UE4%20Scene%20Screenshots/3.png)
 
 ### Part B
-A Whitted-style ray tracer. Two shapes are available -- spheres and meshes. Supports Phong lighting, reflections, and refractions.  
+A Whitted-style ray tracer. Two shapes are available -- spheres and meshes. Supports Phong lighting, reflections, refractions, and fresnel.  
 ![alt text](https://github.com/artpark/GameEngines-Homework2/blob/master/RecursiveRaytracer/example1.png)
 
 #### How to run
