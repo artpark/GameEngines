@@ -53,12 +53,10 @@ public:
         lightDir = lightDir.normalize();
         float LdotN = max(0.0, lightDir.dot(normal));
         Geometry *shadowHitObject = nullptr;
-        float tNearShadow = __FLT_MAX__;
-        bool inShadow = check_occlusion(shadowPointOrig, lightDir, hitGeometry) &&
-                        tNearShadow * tNearShadow < lightDistance2;
+        bool inShadow = check_occlusion(hitPoint, lightDir, hitGeometry);
+        cout << inShadow << "\n";
         lightAmt = lightAmt + (light.intensity * LdotN * (1 - inShadow));
         Vec3 reflectionDirection = (-lightDir).reflect(normal).normalize();
-        cout << reflectionDirection << "\n";
         specularColor = specularColor +
                         (light.intensity *
                          powf(max(0.0, -(reflectionDirection.dot(rayDir))),
@@ -67,7 +65,6 @@ public:
       hitColor = lightAmt * hitGeometry.evalDiffuseColor(st) * hitGeometry.Kd +
                  specularColor * hitGeometry.Ks;
     }
-    cout << hitColor << "\n";
     return hitColor;
   }
 
