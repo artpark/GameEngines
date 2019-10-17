@@ -1,7 +1,6 @@
 #ifndef Geometry_h
 #define Geometry_h
 
-#include "../../color.h"
 #include "../../ray.h"
 #include "../../vect.h"
 #include <cstdint>

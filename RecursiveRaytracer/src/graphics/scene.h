@@ -20,9 +20,7 @@ void fresnel(const Vec3 &I, const Vec3 &N, const float &ior, float &kr)
   {
     swap(etai, etat);
   }
-  // Compute sini using Snell's law
   float sint = etai / etat * sqrtf(max(0.f, 1 - cosi * cosi));
-  // Total internal reflection
   if (sint >= 1)
   {
     kr = 1;
@@ -37,8 +35,6 @@ void fresnel(const Vec3 &I, const Vec3 &N, const float &ior, float &kr)
         ((etai * cosi) - (etat * cost)) / ((etai * cosi) + (etat * cost));
     kr = (Rs * Rs + Rp * Rp) / 2;
   }
-  // As a consequence of the conservation of energy, transmittance is given by:
-  // kt = 1 - kr;
 }
 
 class Scene
@@ -118,7 +114,6 @@ public:
                          powf(max(0.0, -(reflectionDirection.dot(rayDir))),
                               hitGeometry.specularExponent));
       }
-      //cout << st.X << " X " << st.Y << " Y\n";
       hitColor = hitGeometry.ambientColor * hitGeometry.Ka + lightAmt * hitGeometry.evalDiffuseColor(st) * hitGeometry.Kd +
                  specularColor * hitGeometry.Ks;
       break;
@@ -129,7 +124,7 @@ public:
 
   Vec3 trace(float x, float y)
   {
-    // This function works as the camera, translating pixels to rays
+    // eye at the origin, image plane center at 0,0,-1
     Vec3 ray_origin = Vec3(0, 0, 0);
     Vec3 ray_direction = Vec3(x, y, -1).normalize();
 
