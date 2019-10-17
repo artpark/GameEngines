@@ -27,11 +27,15 @@ public:
   Vec3 Shading(const Ray &ray, const Geometry &hitGeometry, double t,
                int depth)
   {
+    Vec3 hitColor = Vec3(255, 255, 255);
+    if (depth < 0)
+    {
+      return hitColor;
+    }
     Vec3 rayOrig = ray.origin;
     Vec3 rayDir = ray.direction;
     Vec3 hitPoint = ray.origin + rayDir * t;
     Vec3 normal;
-    Vec3 hitColor = Vec3(0, 0, 0);
     Vec2 uv;
     Vec2 st;
     uint32_t index = 0;
@@ -41,7 +45,19 @@ public:
 
     switch (hitGeometry.materialType)
     {
-    default:
+    case (REFLECTION):
+    {
+      Vec3 reflectionDir = rayDir.reflect(normal).normalize();
+      Vec3 reflectionRayOrig = (reflectionDir.dot(normal) < 0) ? hitPoint + normal * 0.00001 : hitPoint - normal * 0.00001;
+      hitColor = trace_ray(Ray(reflectionRayOrig, reflectionDir), depth - 1);
+      break;
+    }
+    case (REFLECTION_AND_REFRACTION):
+    {
+      break;
+    }
+    default: //DIFFUSE_AND_GLOSSY
+    {
       Vec3 lightAmt = 0, specularColor = 0;
       Vec3 shadowPointOrig = (rayDir.dot(normal) < 0)
                                  ? hitPoint + normal * 0.00001
@@ -54,7 +70,6 @@ public:
         float LdotN = max(0.0, lightDir.dot(normal));
         Geometry *shadowHitObject = nullptr;
         bool inShadow = check_occlusion(hitPoint, lightDir, hitGeometry);
-        cout << inShadow << "\n";
         lightAmt = lightAmt + (light.intensity * LdotN * (1 - inShadow));
         Vec3 reflectionDirection = (-lightDir).reflect(normal).normalize();
         specularColor = specularColor +
@@ -62,8 +77,11 @@ public:
                          powf(max(0.0, -(reflectionDirection.dot(rayDir))),
                               hitGeometry.specularExponent));
       }
-      hitColor = lightAmt * hitGeometry.evalDiffuseColor(st) * hitGeometry.Kd +
+      //cout << st.X << " X " << st.Y << " Y\n";
+      hitColor = hitGeometry.ambientColor * hitGeometry.Ka + lightAmt * hitGeometry.evalDiffuseColor(st) * hitGeometry.Kd +
                  specularColor * hitGeometry.Ks;
+      break;
+    }
     }
     return hitColor;
   }
@@ -74,10 +92,10 @@ public:
     Vec3 ray_origin = Vec3(0, 0, 0);
     Vec3 ray_direction = Vec3(x, y, -1).normalize();
 
-    return trace_ray(Ray(ray_origin, ray_direction), 0, 50);
+    return trace_ray(Ray(ray_origin, ray_direction), 50);
   }
 
-  Vec3 trace_ray(const Ray &ray, const Geometry *exclude_obj, int depth)
+  Vec3 trace_ray(const Ray &ray, int depth)
   {
     float tNearK = __FLT_MAX__;
     uint32_t indexK;
@@ -100,30 +118,8 @@ public:
     {
       return Shading(ray, *nearest_obj, tNearK, depth);
     }
-    return Vec3(0, 0, 0);
+    return Vec3(255, 255, 255);
   }
-
-  // bool check_occlusion(Vec3 source, Vec3 target, uint32_t &index, Vec2 &uv)
-  // {
-  //   Vec3 toSource = source - target;
-  //   float tLight = toSource.norm();
-  //   Ray ray = Ray(target, toSource * (1.0 / tLight));
-  //   float min_t = tLight;
-  //   const Geometry *nearest_obj = nullptr;
-  //   float t = __FLT_MAX__;
-  //   for (const Geometry *geometry : geometries)
-  //   {
-  //     if ((*geometry).intersect(ray.origin, ray.direction, t, index, uv))
-  //     {
-  //       if (min_t > t)
-  //       {
-  //         nearest_obj = geometry;
-  //         min_t = t;
-  //       }
-  //     }
-  //   }
-  //   return nearest_obj == nullptr;
-  // }
 
   bool check_occlusion(Vec3 source, Vec3 target, const Geometry &self)
   {
