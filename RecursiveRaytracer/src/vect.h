@@ -1,6 +1,3 @@
-/*
- *  Citation: https://github.com/ChinksofLight/Ray-tracer/blob/master/vect.h
- */
 #ifndef Vect_h
 #define Vect_h
 

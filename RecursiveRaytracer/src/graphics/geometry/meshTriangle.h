@@ -7,13 +7,15 @@
 #include <iostream>
 #include <memory>
 
-inline Vec3 mix(const Vec3 &a, const Vec3 &b, const float &mixValue) {
+inline Vec3 mix(const Vec3 &a, const Vec3 &b, const float &mixValue)
+{
   return a * (1 - mixValue) + b * mixValue;
 }
 
 bool rayTriangleIntersect(const Vec3 &v0, const Vec3 &v1, const Vec3 &v2,
                           const Vec3 &orig, const Vec3 &dir, float &tnear,
-                          float &u, float &v) {
+                          float &u, float &v)
+{
   Vec3 edge1 = v1 - v0;
   Vec3 edge2 = v2 - v0;
   Vec3 pvec = dir.crossProduct(edge2);
@@ -40,7 +42,8 @@ bool rayTriangleIntersect(const Vec3 &v0, const Vec3 &v1, const Vec3 &v2,
   return true;
 }
 
-class MeshTriangle : public Geometry {
+class MeshTriangle : public Geometry
+{
 public:
   unique_ptr<Vec3[]> vertices;
   uint32_t numTriangles;
@@ -48,7 +51,8 @@ public:
   unique_ptr<Vec2[]> stCoordinates;
 
   MeshTriangle(const Vec3 *verts, const uint32_t *vertsIndex,
-               const uint32_t &numTris, const Vec2 *st) {
+               const uint32_t &numTris, const Vec2 *st)
+  {
     uint32_t maxIndex = 0;
     for (uint32_t i = 0; i < numTris * 3; ++i)
       if (vertsIndex[i] > maxIndex)
@@ -64,14 +68,17 @@ public:
   }
 
   bool intersect(const Vec3 &orig, const Vec3 &dir, float &tnear,
-                 uint32_t &index, Vec2 &uv) const {
+                 uint32_t &index, Vec2 &uv) const
+  {
     bool intersect = false;
-    for (uint32_t k = 0; k < numTriangles; ++k) {
+    for (uint32_t k = 0; k < numTriangles; ++k)
+    {
       const Vec3 &v0 = vertices[vertexIndex[k * 3]];
       const Vec3 &v1 = vertices[vertexIndex[k * 3 + 1]];
       const Vec3 &v2 = vertices[vertexIndex[k * 3 + 2]];
       float t, u, v;
-      if (rayTriangleIntersect(v0, v1, v2, orig, dir, t, u, v) && t < tnear) {
+      if (rayTriangleIntersect(v0, v1, v2, orig, dir, t, u, v) && t < tnear)
+      {
         tnear = t;
         uv.X = u;
         uv.Y = v;
@@ -84,7 +91,8 @@ public:
   }
 
   void getSurfaceProperties(const Vec3 &P, const Vec3 &I, const uint32_t &index,
-                            const Vec2 &uv, Vec3 &N, Vec2 &st) const {
+                            const Vec2 &uv, Vec3 &N, Vec2 &st) const
+  {
     const Vec3 &v0 = vertices[vertexIndex[index * 3]];
     const Vec3 &v1 = vertices[vertexIndex[index * 3 + 1]];
     const Vec3 &v2 = vertices[vertexIndex[index * 3 + 2]];
@@ -97,7 +105,8 @@ public:
     st = st0 * (1 - uv.X - uv.Y) + st1 * uv.X + st2 * uv.Y;
   }
 
-  Vec3 evalDiffuseColor(const Vec2 &st) const {
+  Vec3 evalDiffuseColor(const Vec2 &st) const
+  {
     float scale = 5;
     float pattern =
         (fmodf(st.X * scale, 1) > 0.5) ^ (fmodf(st.Y * scale, 1) > 0.5);
