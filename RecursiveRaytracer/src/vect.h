@@ -9,7 +9,8 @@
 
 using namespace std;
 
-class Vec3 {
+class Vec3
+{
 public:
   float X;
   float Y;
@@ -19,32 +20,43 @@ public:
   Vec3(float n) : X(n), Y(n), Z(n) {}
   Vec3(float x, float y, float z) : X(x), Y(y), Z(z) {}
 
-  Vec3 operator+(const Vec3 &vec) const {
+  Vec3 operator+(const Vec3 &vec) const
+  {
     return Vec3(X + vec.X, Y + vec.Y, Z + vec.Z);
   }
 
-  Vec3 operator-(const Vec3 &vec) const {
+  Vec3 operator-(const Vec3 &vec) const
+  {
     return Vec3(X - vec.X, Y - vec.Y, Z - vec.Z);
   }
 
-  Vec3 operator*(const double &scalar) const {
+  Vec3 operator-() const
+  {
+    return Vec3(-X, -Y, -Z);
+  }
+
+  Vec3 operator*(const double &scalar) const
+  {
     return Vec3(scalar * X, scalar * Y, scalar * Z);
   }
 
-  Vec3 operator*(const Vec3 &vec) const {
+  Vec3 operator*(const Vec3 &vec) const
+  {
     return Vec3(X * vec.X, Y * vec.Y, Z * vec.Z);
   }
 
-  Vec3 crossProduct(const Vec3 &vec) const {
+  Vec3 crossProduct(const Vec3 &vec) const
+  {
     return Vec3(Y * vec.Z - Z * vec.Y, Z * vec.X - X * vec.Z,
                 X * vec.Y - Y * vec.X);
   }
 
   Vec3 normalize() { return (*this) * (1 / norm()); }
 
-  Vec3 reflect(const Vec3 &N) { return (*this) - N - 2 * (*this).dot(N); }
+  Vec3 reflect(const Vec3 &N) { return (*this) - N * 2 * (*this).dot(N); }
 
-  double dot(const Vec3 &vec) const {
+  double dot(const Vec3 &vec) const
+  {
     return X * vec.X + Y * vec.Y + Z * vec.Z;
   }
 
@@ -52,12 +64,14 @@ public:
 
   double norm2() const { return dot(*this); }
 
-  friend ostream &operator<<(ostream &os, const Vec3 &v) {
+  friend ostream &operator<<(ostream &os, const Vec3 &v)
+  {
     return os << v.X << ", " << v.Y << ", " << v.Z;
   }
 };
 
-class Vec2 {
+class Vec2
+{
 public:
   float X;
   float Y;
